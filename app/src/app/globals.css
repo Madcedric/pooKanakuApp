@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+/* =========================================
+   DESIGN SYSTEM — PooKanakuApp
+   Floral Business Modern Theme
+   ========================================= */
+
+:root {
+  /* Brand Colors */
+  --color-primary:   #2E7D32;
+  --color-secondary: #E91E63;
+  --color-accent:    #F9A825;
+
+  /* Surfaces */
+  --color-background: #FAFAF8;
+  --color-surface:    #FFFFFF;
+  --color-border:     #E5E7EB;
+  --color-muted:      #F3F4F6;
+
+  /* Text */
+  --color-text:        #1F2937;
+  --color-text-muted:  #6B7280;
+  --color-foreground:  #1F2937;
+
+  /* Status */
+  --color-delivered:   #4CAF50;
+  --color-half-supply: #FFB300;
+  --color-no-supply:   #E53935;
+  --color-invoice:     #2196F3;
+  --color-payment:     #9C27B0;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+}
+
+.dark {
+  --color-background: #0F1117;
+  --color-surface:    #1A1D2E;
+  --color-border:     #2D3149;
+  --color-muted:      #1E2235;
+  --color-text:       #E5E7EB;
+  --color-text-muted: #9CA3AF;
+  --color-foreground: #E5E7EB;
+}
+
+@theme inline {
+  --color-primary:    var(--color-primary);
+  --color-secondary:  var(--color-secondary);
+  --color-accent:     var(--color-accent);
+  --color-background: var(--color-background);
+  --color-surface:    var(--color-surface);
+  --color-border:     var(--color-border);
+  --color-muted:      var(--color-muted);
+  --color-text:       var(--color-text);
+  --color-foreground: var(--color-foreground);
+  --font-sans:        var(--font-sans, 'Inter', sans-serif);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-muted); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Transitions */
+a, button { transition: all 0.15s ease; }
+
+/* =========================================
+   RESPONSIVE UTILITIES
+   ========================================= */
+
+/* Grid helpers */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+.flex-row { display: flex; flex-direction: row; align-items: center; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 0.75rem; }
+.gap-3 { gap: 1rem; }
+
+/* Mobile: compact spacing + stack grids */
+@media (max-width: 640px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .flex-row-responsive {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pkk-card {
+    padding: 0.625rem !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Responsive table → card on mobile */
+@media (max-width: 640px) {
+  .pkk-table-wrap table {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .pkk-table-wrap thead { display: none !important; }
+  .pkk-table-wrap tbody tr {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+    padding: 0.625rem !important;
+    border-bottom: 1px solid var(--color-border) !important;
+    border-radius: 8px !important;
+    background: var(--color-surface);
+    margin-bottom: 0.375rem;
+  }
+  .pkk-table-wrap tbody td {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0.15rem 0 !important;
+    font-size: 0.7rem !important;
+    border: none !important;
+    min-width: 0 !important;
+  }
+  .pkk-table-wrap tbody td::before {
+    content: attr(data-label);
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.1rem;
+  }
+  .pkk-table-wrap tbody td.pkk-mobile-full {
+    flex: 0 0 100% !important;
+  }
+  .pkk-table-wrap tbody td.pkk-mobile-actions {
+    flex: 0 0 100% !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    padding-top: 0.25rem !important;
+    border-top: 1px solid var(--color-border) !important;
+    margin-top: 0.15rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
+
+/* FullCalendar mobile overrides */
+@media (max-width: 640px) {
+  .fc {
+    font-size: 0.65rem !important;
+  }
+  .fc-toolbar-title {
+    font-size: 0.85rem !important;
+  }
+  .fc-button {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.6rem !important;
+  }
+  .fc-daygrid-day-number {
+    font-size: 0.65rem !important;
+    padding: 0.2rem !important;
+  }
+  .fc-event-title {
+    font-size: 0.55rem !important;
+  }
+  .fc-col-header-cell-cushion {
+    font-size: 0.6rem !important;
+  }
+  .fc-timegrid-slot-label-cushion {
+    font-size: 0.55rem !important;
+  }
+  .fc-scrollgrid {
+    border-radius: 6px !important;
+  }
+}
