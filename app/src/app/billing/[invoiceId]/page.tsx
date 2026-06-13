@@ -90,7 +90,7 @@ export default function InvoiceDetailPage() {
       </div>
 
       {/* Invoice card */}
-      <div style={{
+      <div className="pkk-invoice-card" style={{
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
         borderRadius: '12px',
