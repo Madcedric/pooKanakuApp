@@ -229,6 +229,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     'cal.status.halfSupply': 'Half Supply',
     'cal.status.noSupply': 'No Supply',
     'cal.status.holiday': 'Holiday',
+    'cal.saved': 'Entry saved',
 
     // Reports extras
     'rpt.total6mo': 'Total (6 mo)',
@@ -496,6 +497,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     'cal.status.halfSupply': 'பாதி விநியோகம்',
     'cal.status.noSupply': 'விநியோகம் இல்லை',
     'cal.status.holiday': 'விடுப்பு நாள்',
+    'cal.saved': 'பதிவு சேமிக்கப்பட்டது',
 
     // Reports extras
     'rpt.total6mo': 'மொத்தம் (6 மாதம்)',
