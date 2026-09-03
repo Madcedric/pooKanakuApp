@@ -6,10 +6,17 @@ import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 import type { User } from '../types/database';
 
+function setAuthCookies(accessToken: string, refreshToken: string) {
+  const maxAge = 60 * 60 * 24 * 7;
+  const attrs = `path=/; max-age=${maxAge}; samesite=lax; secure`;
+  document.cookie = `sb-access-token=${accessToken}; ${attrs}`;
+  document.cookie = `supabase-auth-token=${accessToken}; ${attrs}`;
+  document.cookie = `sb-refresh-token=${refreshToken}; ${attrs}`;
+}
+
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { setUser, setInitialized, setLoading, initialized } = useAuthStore();
-  const isLoginPage = pathname?.startsWith('/login');
 
   const loadUser = useCallback(async () => {
     setLoading(true);
@@ -20,6 +27,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         setUser(null);
         return;
       }
+
+      setAuthCookies(session.access_token, session.refresh_token);
 
       const { data: userRow } = await supabase
         .from('users')
@@ -56,8 +65,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     loadUser().then(() => setInitialized());
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event) => {
+      async (event, session) => {
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          if (session?.access_token && session?.refresh_token) {
+            setAuthCookies(session.access_token, session.refresh_token);
+          }
           await loadUser();
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
