@@ -1,10 +1,44 @@
 "use client";
 
-import React from 'react';
-import { usePathname } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useUIStore } from '../stores/uiStore';
+import { useAuthStore } from '../stores/authStore';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
+
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, initialized, loading } = useAuthStore();
+  const isLoginPage = pathname?.startsWith('/login');
+
+  useEffect(() => {
+    if (initialized && !user && !isLoginPage) {
+      router.replace('/login');
+    }
+  }, [initialized, user, isLoginPage, router]);
+
+  if (isLoginPage) return <>{children}</>;
+
+  if (!initialized || loading) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        backgroundColor: 'var(--color-background)',
+      }}>
+        <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🌺</div>
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
+  return <>{children}</>;
+}
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,8 +49,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar open={sidebarOpen} onClose={closeSidebar} />
+    <AuthGate>
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <Sidebar open={sidebarOpen} onClose={closeSidebar} />
 
       {sidebarOpen && (
         <div
@@ -51,5 +86,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         }
       `}</style>
     </div>
+    </AuthGate>
   );
 }
