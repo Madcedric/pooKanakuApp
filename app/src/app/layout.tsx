@@ -1,6 +1,7 @@
 import './globals.css';
 import Providers from '../components/Providers';
 import AppShell from '../components/AppShell';
+import ErrorSuppressor from '../components/ErrorSuppressor';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-title" content="PooKanaku" />
       </head>
       <body>
+        <ErrorSuppressor />
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>

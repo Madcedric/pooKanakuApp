@@ -19,6 +19,14 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     }
   }, [initialized, user, isLoginPage, router]);
 
+  useEffect(() => {
+    if (isLoginPage) return;
+    const timer = setTimeout(() => {
+      if (!initialized) router.replace('/login');
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [initialized, isLoginPage, router]);
+
   if (isLoginPage) return <>{children}</>;
 
   if (!initialized || loading) {
