@@ -9,7 +9,6 @@ import { useToastStore } from "../../stores/toastStore"
 import { useConfirmStore } from "../../stores/confirmStore"
 import { t, type Lang } from "../../lib/i18n"
 import { supabase } from "../../lib/supabase"
-import { logoutAction } from "../login/actions"
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -23,13 +22,16 @@ export default function SettingsPage() {
     const confirmed = await showConfirm(t(lang, 'settings.logoutConfirm'))
     if (!confirmed) return
     try {
-      await supabase.auth.signOut()
-      await logoutAction()
-      addToast(t(lang, 'settings.loggedOut'), 'success')
-      window.location.href = '/login'
+      await supabase.auth.signOut().catch(() => {})
     } catch {
-      addToast(t(lang, 'settings.logoutError'), 'error')
+      // ignore Supabase errors
     }
+    document.cookie = 'sb-access-token=; path=/; max-age=0';
+    document.cookie = 'supabase-auth-token=; path=/; max-age=0';
+    document.cookie = 'sb-refresh-token=; path=/; max-age=0';
+    useAuthStore.getState().clearAuth()
+    addToast(t(lang, 'settings.loggedOut'), 'success')
+    window.location.href = '/login'
   }
 
   if (!loading && !initialized) {

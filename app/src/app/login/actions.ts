@@ -2,12 +2,7 @@
 
 import { cookies } from 'next/headers';
 
-export async function setSessionCookies(accessToken: string, refreshToken: string): Promise<{ error?: string }> {
-  if (!accessToken || !refreshToken) {
-    return { error: 'Missing session tokens' };
-  }
-
-  const cookieStore = await cookies();
+function setAuthCookies(cookieStore: Awaited<ReturnType<typeof cookies>>, accessToken: string, refreshToken: string) {
   const maxAge = 60 * 60 * 24 * 7; // 7 days
 
   cookieStore.set('sb-access-token', accessToken, {
@@ -30,8 +25,22 @@ export async function setSessionCookies(accessToken: string, refreshToken: strin
     sameSite: 'lax',
     secure: true,
   });
+}
 
+export async function setSessionCookies(accessToken: string, refreshToken: string): Promise<{ error?: string }> {
+  if (!accessToken || !refreshToken) {
+    return { error: 'Missing session tokens' };
+  }
+
+  const cookieStore = await cookies();
+  setAuthCookies(cookieStore, accessToken, refreshToken);
   return {};
+}
+
+export async function syncSessionCookies(accessToken: string, refreshToken: string): Promise<void> {
+  if (!accessToken || !refreshToken) return;
+  const cookieStore = await cookies();
+  setAuthCookies(cookieStore, accessToken, refreshToken);
 }
 
 export async function logoutAction(): Promise<void> {

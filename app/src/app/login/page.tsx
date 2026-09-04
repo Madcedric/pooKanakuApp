@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
-import { setSessionCookies } from './actions';
 import { useLangStore } from '../../stores/langStore';
 import { t } from '../../lib/i18n';
 import { Suspense } from 'react';
@@ -38,19 +37,12 @@ function LoginForm() {
       }
 
       if (data.session) {
-        // Set cookies for middleware using tokens from the client-side session
-        const { error: cookieError } = await setSessionCookies(
-          data.session.access_token,
-          data.session.refresh_token
-        );
+        const maxAge = 60 * 60 * 24 * 7; // 7 days
+        const cookieAttrs = `path=/; max-age=${maxAge}; samesite=lax; secure`;
+        document.cookie = `sb-access-token=${data.session.access_token}; ${cookieAttrs}`;
+        document.cookie = `supabase-auth-token=${data.session.access_token}; ${cookieAttrs}`;
+        document.cookie = `sb-refresh-token=${data.session.refresh_token}; ${cookieAttrs}`;
 
-        if (cookieError) {
-          setError(cookieError);
-          setLoading(false);
-          return;
-        }
-
-        // Full reload so middleware picks up the cookie
         window.location.href = redirectTo;
       }
     } catch (err: any) {

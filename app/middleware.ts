@@ -8,9 +8,10 @@ export function middleware(req: NextRequest) {
 
   if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) return NextResponse.next();
 
-  const hasSession = req.cookies.has('sb-access-token') || req.cookies.has('supabase-auth-token');
+  const accessToken = req.cookies.get('sb-access-token')?.value
+    || req.cookies.get('supabase-auth-token')?.value;
 
-  if (!hasSession) {
+  if (!accessToken) {
     const loginUrl = new URL('/login', req.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
