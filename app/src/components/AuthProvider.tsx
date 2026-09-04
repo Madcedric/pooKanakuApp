@@ -58,11 +58,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       setUser(null);
     } finally {
       setLoading(false);
+      setInitialized();
     }
-  }, [setUser, setLoading]);
+  }, [setUser, setLoading, setInitialized]);
 
   useEffect(() => {
-    loadUser().then(() => setInitialized());
+    loadUser();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
